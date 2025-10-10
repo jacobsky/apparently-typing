@@ -1,53 +1,12 @@
-# Project apparently-typing
+# apparently-typing microblog site
 
-One Paragraph of project description goes here
+Part 3 of my go learning projects. I'm building my small microblog platform. This will eventually spin out into being my formal longterm blog.
 
-## Getting Started
+## Tasks
+- [x] Project configuration and layout
+- [ ] Markdown static blog parsing
+- [ ] Blog index
+- [ ] Articles index
+- [ ] Implement [Basecoatui](https://basecoatui.com/) for various pages
+- [ ] HTMX and Alpine integration 
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
-
-## MakeFile
-
-Run build make command with tests
-```bash
-make all
-```
-
-Build the application
-```bash
-make build
-```
-
-Run the application
-```bash
-make run
-```
-Create DB container
-```bash
-make docker-run
-```
-
-Shutdown DB Container
-```bash
-make docker-down
-```
-
-DB Integrations Test:
-```bash
-make itest
-```
-
-Live reload the application:
-```bash
-make watch
-```
-
-Run the test suite:
-```bash
-make test
-```
-
-Clean up binary from the last build:
-```bash
-make clean
-```

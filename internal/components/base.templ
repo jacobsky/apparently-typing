@@ -1,6 +1,6 @@
-package web
+package components
 
-templ Base() {
+templ Base(title string) {
 	<!DOCTYPE html>
 	<html lang="en" class="h-screen">
 		<head>
@@ -16,4 +16,34 @@ templ Base() {
 			</main>
 		</body>
 	</html>
+}
+
+templ Layout(title string) {
+	@Base(title) {
+		@Header()
+		@Nav()
+		@Aside()
+		@Main()
+		@Footer()
+	}
+}
+
+templ Header() {
+	<header>header</header>
+}
+
+templ Nav() {
+	<nav>nav</nav>
+}
+
+templ Aside() {
+	<aside>Aside</aside>
+}
+
+templ Main() {
+	<main>Main</main>
+}
+
+templ Footer() {
+	<footer>Footer</footer>
 }

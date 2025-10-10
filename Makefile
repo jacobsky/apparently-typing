@@ -25,11 +25,11 @@ build: tailwind-install templ-install
 	@echo "Building..."
 	@templ generate
 	@./tailwindcss -i internal/components/styles/input.css -o internal/components/assets/css/output.css
-	@go build -o main main.go
+	@go build -o main ./cmd/site/main.go
 
 # Run the application
 run:
-	@go run main.go
+	@go run ./cmd/site/main.go
 # Create DB container
 docker-run:
 	@if docker compose up --build 2>/dev/null; then \

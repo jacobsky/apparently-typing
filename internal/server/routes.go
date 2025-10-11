@@ -16,7 +16,8 @@ func (s *Server) RegisterRoutes() http.Handler {
 	home := home.NewHandler()
 	blog := blog.NewHandler()
 	mux.Handle("/", home)
-	mux.Handle("/blog/post", blog)
+	mux.Handle("/blog/", blog)
+	mux.Handle("/blog/{id}", blog)
 	// Wrap the mux with CORS middleware
 	return s.corsMiddleware(mux)
 }

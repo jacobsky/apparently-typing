@@ -1,15 +1,28 @@
 package blog
 
+import (
+	"apparently-typing/internal/components"
+	"fmt"
+)
+
 templ List(section string, titles []string) {
-	<h2>{ section }</h2>
-	for _, listing := range titles {
-		<p>{ listing }</p>
+	@components.Layout("Blog") {
+		<h2>{ section }</h2>
+		for i, listing := range titles {
+			<ul>
+				<li>
+					<a href={ fmt.Sprintf("/blog/%v", i) }>{ listing }</a>
+				</li>
+			</ul>
+		}
 	}
 }
 
 templ Post(data BlogPost) {
-	<article>
-		<header><h2>{ data.Date.String() }</h2><h2>{ data.Title }</h2></header>
-		{ data.Content }
-	</article>
+	@components.Layout("Blog") {
+		<article>
+			<header><h2>{ data.Date.String() }</h2><h2>{ data.Title }</h2></header>
+			<p>{ data.Content }</p>
+		</article>
+	}
 }

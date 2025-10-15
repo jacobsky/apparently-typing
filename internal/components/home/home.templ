@@ -4,7 +4,11 @@ import "apparently-typing/internal/components"
 
 templ Home() {
 	@components.Layout("Home") {
-		<h1>[user] is apparently typing on the internal</h1>
-		<p>Welcome to my little slice of the internet. This site is home to links to my personal projects, articles and musings.</p>
+		<div class="prose">
+			<article>
+				<h1>[user] is apparently typing on the internet</h1>
+				<p>Welcome to my little slice of the internet. This site is home to links to my personal projects, articles and musings.</p>
+			</article>
+		</div>
 	}
 }

@@ -1,4 +1,4 @@
-# Dev Log 1 - Building the pit of success
+### Dev Log 1 - Building the pit of success
 Since I am in need of some additional testing, I am creating this blog entry.
 
 While this blog is partially used as a learning task, one of the big things that I am trying to do is fine tune my ability to properly write blog posts.

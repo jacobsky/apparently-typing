@@ -1,4 +1,4 @@
-# First post
+### First post
 
 Not a very interesting title, I will admit, but for the moment it will have to do. I don't have any specific plans for this blog other than to be where I post things that I think about related to my hobbies/tech.
 
@@ -9,8 +9,6 @@ In actuality, this post is mostly just here to help fill out the test data for b
 ```go
 //go:embed blog
 var blogposts embed.FS
-```
-```
 ```
 
 Anyways, hopefully, I have better musings in the future. For now I'll keep working on getting this working as I learn all about the ins and outs of go + templ + tailwind.

@@ -2,6 +2,9 @@ package blog
 
 import (
 	"apparently-typing/static"
+	"bytes"
+	"context"
+	"io"
 	"log/slog"
 	"net/http"
 	"path"
@@ -11,12 +14,17 @@ import (
 	"time"
 
 	"github.com/a-h/templ"
+	"github.com/yuin/goldmark"
+)
+
+const (
+	YYYYMMDD = "20060102"
 )
 
 type BlogPost struct {
 	Date    time.Time
 	Title   string
-	Content string
+	Content templ.Component
 }
 type Handler struct{}
 
@@ -53,9 +61,17 @@ func list(w http.ResponseWriter, r *http.Request) {
 	}
 	titles := make([]string, len(posts))
 	for i, post := range posts {
-		titles[i] = post.Name()
+		title := strings.Split(post.Name(), "-")[1]
+		titles[i] = strings.TrimSuffix(title, ".md")
 	}
 	templ.Handler(List("Blog Posts", titles)).ServeHTTP(w, r)
+}
+
+func unsafeRenderMarkdown(html string) templ.Component {
+	return templ.ComponentFunc(func(ctx context.Context, w io.Writer) (err error) {
+		_, err = io.WriteString(w, html)
+		return
+	})
 }
 
 func showpost(index int, w http.ResponseWriter, r *http.Request) {
@@ -85,19 +101,24 @@ func showpost(index int, w http.ResponseWriter, r *http.Request) {
 		slog.Error("Parsing filename error", "error", err)
 		return
 	}
-	year, err := strconv.Atoi(filedate[0:4])
-	month, err2 := strconv.Atoi(filedate[5:6])
-	day, err3 := strconv.Atoi(filedate[7:8])
-	if err != nil || err2 != nil || err3 != nil {
+	t, err := time.Parse(YYYYMMDD, filedate)
+
+	if err != nil {
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
-		slog.Error("Time converstaion error", "error", err, "error", err2, "error", err3)
+		slog.Error("Time converstaion error", "error", err)
 		return
 	}
 
+	var buf bytes.Buffer
+	if err := goldmark.Convert(filecontent, &buf); err != nil {
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		slog.Error("Markdown parsing error", "error", err)
+	}
+	htmlcontent := unsafeRenderMarkdown(buf.String())
 	var post = BlogPost{
-		Date:    time.Date(year, time.Month(month), day, 0, 0, 0, 0, time.UTC),
+		Date:    t,
 		Title:   filetitle,
-		Content: string(filecontent),
+		Content: htmlcontent,
 	}
 	templ.Handler(Post(post)).ServeHTTP(w, r)
 }

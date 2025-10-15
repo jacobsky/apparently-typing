@@ -7,22 +7,31 @@ import (
 
 templ List(section string, titles []string) {
 	@components.Layout("Blog") {
-		<h2>{ section }</h2>
-		for i, listing := range titles {
-			<ul>
-				<li>
-					<a href={ fmt.Sprintf("/blog/%v", i) }>{ listing }</a>
-				</li>
-			</ul>
-		}
+		<section>
+			<h2>{ section }</h2>
+			for i, listing := range titles {
+				<ul>
+					<li>
+						<a href={ fmt.Sprintf("/blog/%v", i) }>{ listing }</a>
+					</li>
+				</ul>
+			}
+			// TODO: Add pagination when there are sufficient entries to need it.
+		</section>
 	}
 }
 
 templ Post(data BlogPost) {
 	@components.Layout("Blog") {
-		<article>
-			<header><h2>{ data.Date.String() }</h2><h2>{ data.Title }</h2></header>
-			<p>{ data.Content }</p>
-		</article>
+		<section>
+			<article>
+				<header>
+					<h1>
+						{ data.Title } - { data.Date.Format("2006-01-02") }
+					</h1>
+				</header>
+				@data.Content
+			</article>
+		</section>
 	}
 }

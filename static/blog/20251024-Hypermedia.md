@@ -28,6 +28,8 @@ Essentially, it's the kind of thing that would allow you to make a button that e
 
 The declarative nature of the syntax allows for simple directives to be embedded that enable rich interactivity for the web at minimal cost. To be honest, it's just about the perfect extension to HTML for _most_ applications, though you may need another library like alpine.js or hyperscript to get more clientside interactivity (such as animations and such)
 
+I think that the biggest point that I adore about HTMX is that the design philophy is "Build your webapp without it first, then sprinkle it in where you need additional client side reactivity.
+
 #### Datastar
 
 While HTMX is rooted in a desire for the simplicity of the past, Datastar is firmly rooted in the modern web as a fullstack framework that you can leverage for a modern feeling web app with the simplicity of HTMX.
@@ -46,7 +48,13 @@ But it's also possible to do more with simple json signals themselves that allow
 
 This can be a super efficient way to set up endpoints and create a reactive frontend with minimal effort or hassle.
 
-In particular the Server Sent Events implementation of datastar makes it an incredibly flexible tool to update small portions of the dom dynamically without having to duplicate the state on the client.
+In particular the Server Sent Events implementation of datastar makes it an incredibly flexible tool to update small portions of the dom dynamically without having to duplicate the state on the client. 
+
+While Datastar does allow -- to some extent -- while you can follow the HTMX approach of "build it without reactivity and then sprinkle it in" that isn't really leveraging the true power of Datastar. Actually adding in more of the functionality requires a bit more forethought to make the most of the server sent events directly in your application. Building with Datastar in mind if much more "required" when starting out if you want to unlock it's full potential. As contrasted with HTMX which benefits considerably more from the "sprinkling in reactivity" approach.
+
+Both technologies are fantastic web technologies that manage to be simple, elegant, _and_ powerful.
+
+As with everything they aren't a silver bullet, but they are super fun to use and I'm looking forward to making more things with them.
 
 Maybe later I'll be able to talk about more of the examples.
 

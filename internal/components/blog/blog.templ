@@ -9,10 +9,10 @@ templ List(section string, titles []string) {
 	@components.Layout("Blog") {
 		<section>
 			<h2>{ section }</h2>
-			for i, listing := range titles {
+			for i := len(titles) - 1; i>=0; i-- {
 				<ul>
 					<li>
-						<a href={ fmt.Sprintf("/blog/%v", i) }>{ listing }</a>
+						<a href={ fmt.Sprintf("/blog/%v", i) }>{ titles[i] }</a>
 					</li>
 				</ul>
 			}

@@ -6,6 +6,6 @@ Part 3 of my go learning projects. I'm building my small microblog platform. Thi
 - [x] Project configuration and layout
 - [x] Markdown static blog parsing
 - [x] Blog index
-- [ ] Implement [Basecoatui](https://basecoatui.com/) or [templui](https://templui.io) for styling and components in the various pages and fill out the full blog.
+- [x] ~~Implement [Basecoatui](https://basecoatui.com/) or [templui](https://templui.io) for styling and components in the various pages and fill out the full blog.~~ Using PicoCSS instead
 - [ ] HTMX and Alpine integration for smoother actions.
 

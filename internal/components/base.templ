@@ -7,9 +7,8 @@ templ Base(title string) {
 			<meta charset="utf-8"/>
 			<meta name="viewport" content="width=device-width,initial-scale=1"/>
 			<title>{ title }</title>
-			<link href="/assets/css/output.css" rel="stylesheet"/>
+			<link type="module" href="datastar.js"/>
 			<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css"/>
-			<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/holiday.css@0.11.2"/> -->
 		</head>
 		<body>
 			{ children... }
@@ -37,7 +36,7 @@ templ Header() {
 			<nav>
 				<ul>
 					<li>
-						<a href="/" class="secondary" aria-label="Apparnetly Typing Homepage">
+						<a href="/" class="secondary" aria-label="Apparently Typing Homepage">
 							<strong>
 								Apparently
 								Typing

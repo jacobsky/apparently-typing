@@ -41,10 +41,12 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		index, err := strconv.Atoi(r.PathValue("id"))
+		// If failed, we just return list with a redirect
 		if err != nil {
-			http.Error(w, "Malformed post ID", http.StatusBadRequest)
+			http.Redirect(w, r, "/blog/", http.StatusMovedPermanently)
 			return
 		}
+
 		showpost(index, w, r)
 		// Check
 
@@ -83,7 +85,7 @@ func showpost(index int, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if index >= len(posts) || index < 0 {
-		http.Error(w, "Post not found", http.StatusNotFound)
+		http.Redirect(w, r, "/blog/", http.StatusMovedPermanently)
 		return
 	}
 	filename := posts[index].Name()
@@ -105,7 +107,7 @@ func showpost(index int, w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
-		slog.Error("Time converstaion error", "error", err)
+		slog.Error("Time conversation error", "error", err)
 		return
 	}
 

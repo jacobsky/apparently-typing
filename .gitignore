@@ -32,8 +32,8 @@ main
 # OS X generated file
 .DS_Store
 
-
+node_modules/*
 # Tailwind CSS
-internal/server/assets/css/output.css
+internal/views/assets/css/output.css
 tailwindcss
 

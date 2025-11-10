@@ -5,33 +5,54 @@ import (
 	"fmt"
 )
 
-templ List(section string, titles []string) {
+templ List(section string, titles []BlogPost) {
 	@views.Layout("Blog") {
 		<section>
-			<h2>{ section }</h2>
-			for i := len(titles) - 1; i>=0; i-- {
-				<ul>
-					<li>
-						<a href={ fmt.Sprintf("/blog/%v", i) }>{ titles[i] }</a>
+			<h3>{ section }</h3>
+			<ul class="list rounded-box shadow-md">
+				for i := len(titles) - 1; i>=0; i-- {
+					<li class="list-row">
+						<div>
+							{ titles[i].Date.Format("2006-01-02") }
+						</div>
+						<div>
+							<a href={ fmt.Sprintf("/blog/%v", i) }>{ titles[i].Title }</a>
+						</div>
 					</li>
-				</ul>
-			}
-			// TODO: Add pagination when there are sufficient entries to need it.
+				}
+			</ul>
+			// TODO: Add pagination or infinite scroll when there are sufficient entries to need it.
 		</section>
 	}
 }
 
-templ Post(data BlogPost) {
+templ Post(data BlogPost, canGoForward, canGoBack bool) {
 	@views.Layout("Blog") {
 		<section>
-			<article>
+			<article class="prose lg:prose-xl">
 				<header>
-					<h1>
-						{ data.Title } - { data.Date.Format("2006-01-02") }
-					</h1>
+					<h3>{ data.Title } </h3>
+					<h4>Posted { data.Date.Format("2006-01-02") } </h4>
 				</header>
 				@data.Content
 			</article>
+			<div class="flex">
+				<ul class="menu menu-horizontal rounded-box justify-center">
+					if canGoBack {
+						<li>
+							<a href={ fmt.Sprintf("/blog/%v", data.ID-1) }>Back</a>
+						</li>
+					}
+					<li>
+						<a href="/blog/">Top</a>
+					</li>
+					if canGoForward {
+						<li>
+							<a href={ fmt.Sprintf("/blog/%v", data.ID+1) }>Next</a>
+						</li>
+					}
+				</ul>
+			</div>
 		</section>
 	}
 }

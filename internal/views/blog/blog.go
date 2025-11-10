@@ -22,6 +22,7 @@ const (
 )
 
 type BlogPost struct {
+	ID      int
 	Date    time.Time
 	Title   string
 	Content templ.Component
@@ -61,10 +62,20 @@ func list(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
 		return
 	}
-	titles := make([]string, len(posts))
+	titles := make([]BlogPost, 0, len(posts))
 	for i, post := range posts {
-		title := strings.Split(post.Name(), "-")[1]
-		titles[i] = strings.TrimSuffix(title, ".md")
+		datetitle := strings.TrimSuffix(post.Name(), ".md")
+		date, title, found := strings.Cut(datetitle, "-")
+		if found {
+			t, err := time.Parse(YYYYMMDD, date)
+			if err != nil {
+				slog.Error("List Posts", "error", err)
+				continue
+			}
+			titles = append(titles, BlogPost{ID: i, Title: title, Date: t})
+		} else {
+			slog.Error("Blogpost name malformed", "title", datetitle)
+		}
 	}
 	templ.Handler(List("Blog Posts", titles)).ServeHTTP(w, r)
 }
@@ -84,7 +95,8 @@ func showpost(index int, w http.ResponseWriter, r *http.Request) {
 		slog.Error("Read Blog Files Error: ", "error", err)
 		return
 	}
-	if index >= len(posts) || index < 0 {
+	totalPosts := len(posts)
+	if index >= totalPosts || index < 0 {
 		http.Redirect(w, r, "/blog/", http.StatusMovedPermanently)
 		return
 	}
@@ -118,9 +130,10 @@ func showpost(index int, w http.ResponseWriter, r *http.Request) {
 	}
 	htmlcontent := unsafeRenderMarkdown(buf.String())
 	var post = BlogPost{
+		ID:      index,
 		Date:    t,
 		Title:   filetitle,
 		Content: htmlcontent,
 	}
-	templ.Handler(Post(post)).ServeHTTP(w, r)
+	templ.Handler(Post(post, index < totalPosts-1, index > 0)).ServeHTTP(w, r)
 }

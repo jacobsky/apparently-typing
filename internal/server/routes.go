@@ -1,8 +1,8 @@
 package server
 
 import (
-	"apparently-typing/internal/components/blog"
-	"apparently-typing/internal/components/home"
+	"apparently-typing/internal/views/blog"
+	"apparently-typing/internal/views/home"
 	"net/http"
 )
 

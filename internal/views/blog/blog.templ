@@ -1,12 +1,12 @@
 package blog
 
 import (
-	"apparently-typing/internal/components"
+	"apparently-typing/internal/views"
 	"fmt"
 )
 
 templ List(section string, titles []string) {
-	@components.Layout("Blog") {
+	@views.Layout("Blog") {
 		<section>
 			<h2>{ section }</h2>
 			for i := len(titles) - 1; i>=0; i-- {
@@ -22,7 +22,7 @@ templ List(section string, titles []string) {
 }
 
 templ Post(data BlogPost) {
-	@components.Layout("Blog") {
+	@views.Layout("Blog") {
 		<section>
 			<article>
 				<header>

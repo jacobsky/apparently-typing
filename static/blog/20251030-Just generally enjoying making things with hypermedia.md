@@ -1,5 +1,3 @@
-### A continued diatribe on hypermedia technologies.
-
 Over the last week, I have had a very pleasant time working with datastar. Originally, I had intended to stick primarily to HTMX and Alpine for the frontend reactivity, but Datastar has largely won me over (for personal projects at least) due to it's heavy emphasis on easily including both aspects of reactivity into my applications. In fact, I got another idea that is probably only possible with datastar (or a SPA, but let's be real, SPAs are just not what I'm interested in).
 
 What I've really kind of nailed down over the last week is that I feel that the discussion with the web is _usually_ all about trade-offs in performance, simplicity, richeness, etc. But the strangest thing about datastar is that it feels like... I get everything and I get it all for free? Which makes me kind of question the modern web, like really?

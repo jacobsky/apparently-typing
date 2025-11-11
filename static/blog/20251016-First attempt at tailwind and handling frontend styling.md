@@ -1,6 +1,3 @@
-
-### Dev Log 2 - Tailwind and frontend styling
-
 So, most of my experience is in the weeds of programming. Not nearly as much is in styling and CSS, but have been learning.
 
 Interestingly enough, CSS is still a similar beast to what it has been since the dawn of styling on the internet, where general layouts are relatively simple to implement using semantic HTML, but specialized widgets can be a nightmare of complexity.

@@ -1,5 +1,3 @@
-### Data Star is Awesome
-
 After spending the lat week getting to grips with datastar, I have come to realize that this is the tool/approach I wish I had learned when I was learning web fundamentals more than a decade ago. Part of it is that datastar enables a primarily systems and backend developer (like myself) to have the fancy full featured webapps of the web without having to go through a million hoops of the Javascript framework ecosystem (it's basically react all over now). 
 
 The big part of it is how it really just simplifies workflows, it gives you (almost) all the power of react, with no "hydration", no state untangling, no need for an API data layer (and all the associated churn included). It's just hypermedia on whatever you like (in my case, templ is what I like). It also largely solves the security considerations since everything that matters for the state is set and adjusted on the server.

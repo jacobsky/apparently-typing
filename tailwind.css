@@ -2,6 +2,6 @@
 
 @plugin "@tailwindcss/typography";
 @plugin "daisyui" {
-    themes:all;
+    themes: cupcake, night --default;
 }
 

@@ -1,5 +1,3 @@
-### First post
-
 Not a very interesting title, I will admit, but for the moment it will have to do. I don't have any specific plans for this blog other than to be where I post things that I think about related to my hobbies/tech.
 
 You can probably consider this a personal diary that I am just putting out there to generally talk about tech interests, job stuff and life stuff.

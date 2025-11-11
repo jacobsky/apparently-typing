@@ -7,18 +7,20 @@ import (
 
 templ List(section string, titles []BlogPost) {
 	@views.Layout("Blog") {
-		<section>
-			<h3>{ section }</h3>
+		<section class="my-4">
+			<h3 class="text-3xl underlined p-4">{ section }</h3>
 			<ul class="list rounded-box shadow-md">
 				for i := len(titles) - 1; i>=0; i-- {
-					<li class="list-row">
-						<div>
-							{ titles[i].Date.Format("2006-01-02") }
-						</div>
-						<div>
-							<a href={ fmt.Sprintf("/blog/%v", i) }>{ titles[i].Title }</a>
-						</div>
-					</li>
+					<a class="hover" href={ fmt.Sprintf("/blog/%v", i) }>
+						<li class="list-row hover:secondary">
+							<div class="text-xl">
+								{ titles[i].Date.Format("2006-01-02") }
+							</div>
+							<div class="text-xl list-column-grow">
+								{ titles[i].Title }
+							</div>
+						</li>
+					</a>
 				}
 			</ul>
 			// TODO: Add pagination or infinite scroll when there are sufficient entries to need it.
@@ -28,12 +30,11 @@ templ List(section string, titles []BlogPost) {
 
 templ Post(data BlogPost, canGoForward, canGoBack bool) {
 	@views.Layout("Blog") {
-		<section>
+		<section class="mx-auto my-4">
 			<article class="prose lg:prose-xl">
-				<header>
-					<h3>{ data.Title } </h3>
-					<h4>Posted { data.Date.Format("2006-01-02") } </h4>
-				</header>
+				<h3>{ data.Title } </h3>
+				<div class="divider"></div>
+				<h4>Blog Post { data.ID } posted: { data.Date.Format("2006-01-02") } </h4>
 				@data.Content
 			</article>
 			<div class="flex">

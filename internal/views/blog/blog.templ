@@ -5,7 +5,7 @@ import (
 	"fmt"
 )
 
-templ List(section string, titles []BlogPost) {
+templ Index(section string, titles []BlogPost) {
 	@views.Layout("Blog") {
 		<section class="my-4">
 			<h3 class="text-3xl underlined p-4">{ section }</h3>
@@ -23,37 +23,51 @@ templ List(section string, titles []BlogPost) {
 					</a>
 				}
 			</ul>
-			// TODO: Add pagination or infinite scroll when there are sufficient entries to need it.
 		</section>
 	}
 }
 
-templ Post(data BlogPost, canGoForward, canGoBack bool) {
+templ PostFrag(data *BlogPost) {
+	<section class="mx-auto my-4">
+		<article class="prose lg:prose-xl">
+			<h3>{ data.Title } </h3>
+			<h4>Blog Post { data.ID } posted: { data.Date.Format("2006-01-02") } </h4>
+			@data.Content
+		</article>
+		<div class="divider"></div>
+	</section>
+}
+
+templ Post(data *BlogPost, nav templ.Component) {
 	@views.Layout("Blog") {
-		<section class="mx-auto my-4">
-			<article class="prose lg:prose-xl">
-				<h3>{ data.Title } </h3>
-				<div class="divider"></div>
-				<h4>Blog Post { data.ID } posted: { data.Date.Format("2006-01-02") } </h4>
-				@data.Content
-			</article>
-			<div class="flex">
-				<ul class="menu menu-horizontal rounded-box justify-center">
-					if canGoBack {
-						<li>
-							<a href={ fmt.Sprintf("/blog/%v", data.ID-1) }>Back</a>
-						</li>
-					}
-					<li>
-						<a href="/blog/">Top</a>
-					</li>
-					if canGoForward {
-						<li>
-							<a href={ fmt.Sprintf("/blog/%v", data.ID+1) }>Next</a>
-						</li>
-					}
-				</ul>
-			</div>
-		</section>
+		@PostFrag(data)
+		@nav
 	}
+}
+
+// next and prev are the related post IDs, if -1 it means there is no post to navigate to
+templ Nav(next, prev int) {
+	<div id="post_nav" class="flex justify-self-center">
+		<ul class="menu menu-horizontal rounded-box justify-center">
+			if prev != -1 {
+				<li>
+					<a href={ fmt.Sprintf("/blog/%v", prev) }>Back</a>
+				</li>
+			}
+			<li>
+				<a href="/blog/">Top</a>
+			</li>
+			if next != -1 {
+				<li>
+					<a href={ fmt.Sprintf("/blog/%v", next) }>Next</a>
+				</li>
+			}
+		</ul>
+	</div>
+}
+
+templ PostScroll(next int) {
+	<div class="justify-self-center" data-indicator:fetching id="post_nav" data-on-intersect__once={ fmt.Sprintf("@get('/blog/%v')", next) }>
+		<div class="loading loading-ring" data-show="$fetching"></div>
+	</div>
 }

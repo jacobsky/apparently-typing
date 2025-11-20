@@ -4,6 +4,8 @@ import (
 	"apparently-typing/static"
 	"bytes"
 	"context"
+	"errors"
+	"fmt"
 	"io"
 	"log/slog"
 	"net/http"
@@ -14,6 +16,7 @@ import (
 	"time"
 
 	"github.com/a-h/templ"
+	"github.com/starfederation/datastar-go/datastar"
 	"github.com/yuin/goldmark"
 )
 
@@ -36,27 +39,87 @@ func NewHandler() http.Handler {
 func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodGet:
-		post_id := r.PathValue("id")
-		if post_id == "" {
-			list(w, r)
-			return
-		}
-		index, err := strconv.Atoi(r.PathValue("id"))
-		// If failed, we just return list with a redirect
-		if err != nil {
-			http.Redirect(w, r, "/blog/", http.StatusMovedPermanently)
+		// If we get a datastar request, we need to handle it using SSE's
+		if r.Header.Get("Datastar-Request") == "true" {
+			slog.Info("Datastar-Request")
+			handleDatastar(w, r)
 			return
 		}
 
-		showpost(index, w, r)
-		// Check
-
+		switch r.PathValue("id") {
+		// continous reading for all the posts.
+		case "all":
+			posts, err := static.BlogFiles.ReadDir("blog")
+			if err != nil {
+				http.Error(w, "Internal server error", http.StatusInternalServerError)
+			}
+			index := len(posts) - 1
+			post, _, _ := getpost(index)
+			// If it can scroll, add the element that will allow autoscroll, otherwise, standard element
+			if post.ID > 0 {
+				templ.Handler(Post(post, PostScroll(post.ID-1))).ServeHTTP(w, r)
+			} else {
+				templ.Handler(Post(post, Nav(post.ID+1, -1))).ServeHTTP(w, r)
+			}
+		// Shows only the latest post
+		case "latest":
+			posts, err := static.BlogFiles.ReadDir("blog")
+			if err != nil {
+				http.Error(w, "Internal server error", http.StatusInternalServerError)
+			}
+			index := len(posts) - 1
+			showpost(index, w, r)
+		case "":
+			showindex(w, r)
+		default:
+			index, err := strconv.Atoi(r.PathValue("id"))
+			// If failed, we just return index with a redirect
+			if err != nil {
+				http.Redirect(w, r, "/blog/", http.StatusMovedPermanently)
+				return
+			}
+			showpost(index, w, r)
+		}
 	default:
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 	}
 }
 
-func list(w http.ResponseWriter, r *http.Request) {
+func handleDatastar(w http.ResponseWriter, r *http.Request) {
+	sse := datastar.NewSSE(w, r)
+	index, err := strconv.Atoi(r.PathValue("id"))
+	// If failed, we'll just let the connection close without updating anything.
+	if err != nil {
+		_ = sse.ConsoleError(fmt.Errorf("internal server error. path value not valid integer: %w", err))
+		slog.Error("Datastar-Request emitted", "error", err)
+		return
+	}
+
+	post, _, err := getpost(index)
+	if err != nil {
+		_ = sse.ConsoleError(fmt.Errorf("fetch post error: %w", err))
+		slog.Error("Internal Server Error", "error", err)
+		return
+	}
+
+	err = sse.PatchElementTempl(PostFrag(post), datastar.WithSelectorID("post_nav"), datastar.WithModeBefore())
+	if err != nil {
+		_ = sse.ConsoleError(fmt.Errorf("something went wrong with patching %w", err))
+		slog.Error("Internal Server Error", "error", err)
+		return
+	}
+	// TODO: Allow for "direct links" in addition to infinite scrolling approach
+	if index > 0 {
+		err = sse.PatchElementTempl(PostScroll(index-1), datastar.WithSelectorID("post_nav"))
+		if err != nil {
+			_ = sse.ConsoleError(fmt.Errorf("something went wrong with patching %w", err))
+			slog.Error("Internal Server Error", "error", err)
+		}
+
+	}
+}
+
+func showindex(w http.ResponseWriter, r *http.Request) {
 	posts, err := static.BlogFiles.ReadDir("blog")
 	if err != nil {
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
@@ -77,7 +140,7 @@ func list(w http.ResponseWriter, r *http.Request) {
 			slog.Error("Blogpost name malformed", "title", datetitle)
 		}
 	}
-	templ.Handler(List("Blog Posts", titles)).ServeHTTP(w, r)
+	templ.Handler(Index("Blog Posts", titles)).ServeHTTP(w, r)
 }
 
 func unsafeRenderMarkdown(html string) templ.Component {
@@ -88,52 +151,71 @@ func unsafeRenderMarkdown(html string) templ.Component {
 }
 
 func showpost(index int, w http.ResponseWriter, r *http.Request) {
+	post, total, err := getpost(index)
+	if errors.Is(err, ErrPostNotFound) {
+		http.Redirect(w, r, "/blog/", http.StatusMovedPermanently)
+		return
+	} else if err != nil {
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+	}
+	// Conditionally allow for a naviation based on whether there are additional available
+	next, prev := -1, -1
+	if post.ID+1 < total {
+		next = post.ID + 1
+	}
+
+	if post.ID-1 > 0 {
+		prev = post.ID - 1
+	}
+	templ.Handler(Post(post, Nav(next, prev))).ServeHTTP(w, r)
+}
+
+var ErrPostNotFound = errors.New("blog post not found")
+
+func getpost(index int) (*BlogPost, int, error) {
 	posts, err := static.BlogFiles.ReadDir("blog")
 
 	if err != nil {
-		http.Error(w, "Internal server error", http.StatusInternalServerError)
-		slog.Error("Read Blog Files Error: ", "error", err)
-		return
+		slog.Error("Read Blog Directory Error: ", "error", err)
+		return nil, 0, fmt.Errorf("read blog directory error %w", err)
 	}
+
 	totalPosts := len(posts)
 	if index >= totalPosts || index < 0 {
-		http.Redirect(w, r, "/blog/", http.StatusMovedPermanently)
-		return
+		return nil, 0, ErrPostNotFound
 	}
+
 	filename := posts[index].Name()
 	filecontent, err := static.BlogFiles.ReadFile(path.Join("blog", filename))
 	if err != nil {
-		http.Error(w, "Internal server error", http.StatusInternalServerError)
 		slog.Error("Read Files Content Error: ", "error", err)
-		return
+		return nil, 0, fmt.Errorf("read files content error %w", err)
 	}
 
 	datetitle := strings.TrimSuffix(filename, ".md")
 	filedate, filetitle, found := strings.Cut(datetitle, "-")
 	if !found {
-		http.Error(w, "Internal server error", http.StatusInternalServerError)
 		slog.Error("Parsing filename error", "error", err)
-		return
+		return nil, 0, fmt.Errorf("parsing filename error: %w", err)
 	}
 	t, err := time.Parse(YYYYMMDD, filedate)
 
 	if err != nil {
-		http.Error(w, "Internal server error", http.StatusInternalServerError)
 		slog.Error("Time conversation error", "error", err)
-		return
+		return nil, 0, fmt.Errorf("time conversion error %w", err)
 	}
 
 	var buf bytes.Buffer
 	if err := goldmark.Convert(filecontent, &buf); err != nil {
-		http.Error(w, "Internal server error", http.StatusInternalServerError)
-		slog.Error("Markdown parsing error", "error", err)
+		slog.Error("Goldmark parsing error", "error", err)
+		return nil, 0, fmt.Errorf("goldmark parsing error %w", err)
 	}
 	htmlcontent := unsafeRenderMarkdown(buf.String())
-	var post = BlogPost{
+	var post = &BlogPost{
 		ID:      index,
 		Date:    t,
 		Title:   filetitle,
 		Content: htmlcontent,
 	}
-	templ.Handler(Post(post, index < totalPosts-1, index > 0)).ServeHTTP(w, r)
+	return post, totalPosts, nil
 }

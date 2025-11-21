@@ -31,9 +31,10 @@ templ PostFrag(data *BlogPost) {
 	<section class="mx-auto my-4">
 		<article class="prose lg:prose-xl">
 			<h3>{ data.Title } </h3>
-			<div class="divider divider-primary">Post #{ data.ID } { data.Date.Format("2006-01-02") }</div>
+			<div class="divider divider-neural">Post #{ data.ID } { data.Date.Format("2006-01-02") }</div>
 			@data.Content
 		</article>
+		<div class="divider divider-primary"></div>
 	</section>
 }
 
@@ -46,7 +47,6 @@ templ Post(data *BlogPost, nav templ.Component) {
 
 // next and prev are the related post IDs, if -1 it means there is no post to navigate to
 templ Nav(next, prev int) {
-	<div class="divider divider-neutral"></div>
 	<div id="post_nav" class=" flex justify-center-safe">
 		<ul class="menu menu-horizontal rounded-box">
 			if prev != -1 {

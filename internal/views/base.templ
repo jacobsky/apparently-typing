@@ -2,6 +2,7 @@ package views
 
 import (
 	"apparently-typing/internal/components"
+	"apparently-typing/internal/views/apps"
 	"time"
 )
 
@@ -52,7 +53,9 @@ templ Nav() {
 						</ul>
 					</details>
 				</li>
-				<li><a href="https://hire.apparently-typ.ing" target="_blank">Hire</a> </li>
+				if apps.AppHealth.Read("hire") {
+					<li><a href="https://hire.apparently-typ.ing" target="_blank">Hire</a> </li>
+				}
 				<li>
 					<a href="https://github.com/jacobsky/" target="_blank">
 						<svg

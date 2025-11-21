@@ -1,0 +1,12 @@
+package apps
+
+templ Indicator(content string, healthy bool) {
+	<div class="indicator">
+		if healthy {
+			<div class="indicator-item badge badge-success animate-ping">Healthy </div>
+		} else {
+			<div class="indicator-item badge badge-error">Unhealthy </div>
+		}
+		<div class="bg-base-300 grid h-32 w-32 place-items-center">{ content }</div>
+	</div>
+}

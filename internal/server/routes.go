@@ -1,6 +1,7 @@
 package server
 
 import (
+	"apparently-typing/internal/views/apps"
 	"apparently-typing/internal/views/blog"
 	"apparently-typing/internal/views/home"
 	"net/http"
@@ -13,9 +14,12 @@ func (s *Server) RegisterRoutes() http.Handler {
 	fileServer := http.FileServer(http.FS(Files))
 	mux.Handle("/assets/", fileServer)
 
-	home := home.NewHandler()
+	apps := apps.NewHandler()
 	blog := blog.NewHandler()
+	home := home.NewHandler()
 	mux.Handle("/", home)
+	mux.Handle("/apps/", apps)
+	mux.Handle("/apps/{id}", apps)
 	mux.Handle("/blog/", blog)
 	mux.Handle("/blog/{id}", blog)
 	// Wrap the mux with CORS middleware

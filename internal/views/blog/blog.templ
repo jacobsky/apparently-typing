@@ -11,7 +11,7 @@ templ Index(section string, titles []BlogPost) {
 			<h3 class="text-3xl underlined p-4">{ section }</h3>
 			<ul class="list rounded-box shadow-md">
 				for i := len(titles) - 1; i>=0; i-- {
-					<a class="link-hover" class="link link-hover" data-on:click={ fmt.Sprintf("@get('/blog/%v'); $page = '/blog/%v'", i, i) }>
+					<a class="link link-hover" data-on:click={ fmt.Sprintf("@get('/blog/%v'); $page = '/blog/%v'", i, i) }>
 						<li class="list-row">
 							<div class="text-xl">
 								{ titles[i].Date.Format("2006-01-02") }

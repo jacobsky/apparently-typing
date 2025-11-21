@@ -37,49 +37,54 @@ func NewHandler() http.Handler {
 }
 
 func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	switch r.Method {
-	case http.MethodGet:
-
-		switch r.PathValue("id") {
-		// continous reading for all the posts.
-		case "all":
-			posts, err := static.BlogFiles.ReadDir("blog")
-			if err != nil {
-				http.Error(w, "Internal server error", http.StatusInternalServerError)
-			}
-			index := len(posts) - 1
-			post, _, _ := getpost(index)
-			// If it can scroll, add the element that will allow autoscroll, otherwise, standard element
-			if post.ID > 0 {
-				templ.Handler(Post(post, PostScroll(post.ID-1))).ServeHTTP(w, r)
-			} else {
-				templ.Handler(Post(post, Nav(post.ID+1, -1))).ServeHTTP(w, r)
-			}
-		// Shows only the latest post
-		case "latest":
-			posts, err := static.BlogFiles.ReadDir("blog")
-			if err != nil {
-				http.Error(w, "Internal server error", http.StatusInternalServerError)
-			}
-			index := len(posts) - 1
-			showpost(index, w, r)
-		case "":
-			showindex(w, r)
-		default:
-			index, err := strconv.Atoi(r.PathValue("id"))
-			// If failed, we just return index with a redirect
-			if err != nil {
-				http.Redirect(w, r, "/blog/", http.StatusMovedPermanently)
-				return
-			}
-			if r.URL.Query().Has("continuous") {
-				scroll(w, r)
-			} else {
-				showpost(index, w, r)
-			}
-		}
-	default:
+	if r.Method != http.MethodGet {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	switch r.PathValue("id") {
+	// continous reading for all the posts.
+	case "all":
+		posts, err := static.BlogFiles.ReadDir("blog")
+		if err != nil {
+			http.Error(w, "Internal server error", http.StatusInternalServerError)
+			return
+		}
+		index := len(posts) - 1
+		post, _, err := getpost(index)
+		if err != nil {
+			http.Error(w, "Internal server error", http.StatusInternalServerError)
+			return
+		}
+		// If it can scroll, add the element that will allow autoscroll, otherwise, standard element
+		if post.ID > 0 {
+			templ.Handler(Post(post, PostScroll(post.ID-1))).ServeHTTP(w, r)
+		} else {
+			templ.Handler(Post(post, Nav(post.ID+1, -1))).ServeHTTP(w, r)
+		}
+	// Shows only the latest post
+	case "latest":
+		posts, err := static.BlogFiles.ReadDir("blog")
+		if err != nil {
+			http.Error(w, "Internal server error", http.StatusInternalServerError)
+			return
+		}
+		index := len(posts) - 1
+		showpost(index, w, r)
+	case "":
+		showindex(w, r)
+	default:
+		index, err := strconv.Atoi(r.PathValue("id"))
+		// If failed, we just return index with a redirect
+		if err != nil {
+			http.Redirect(w, r, "/blog/", http.StatusMovedPermanently)
+			return
+		}
+		if r.URL.Query().Has("continuous") {
+			scroll(w, r)
+		} else {
+			showpost(index, w, r)
+		}
 	}
 }
 
@@ -158,11 +163,11 @@ func showpost(index int, w http.ResponseWriter, r *http.Request) {
 	}
 	// Conditionally allow for a naviation based on whether there are additional available
 	next, prev := -1, -1
-	if post.ID+1 < total {
+	if post.ID < total-1 {
 		next = post.ID + 1
 	}
 
-	if post.ID-1 > 0 {
+	if post.ID >= 0 {
 		prev = post.ID - 1
 	}
 	templ.Handler(Post(post, Nav(next, prev))).ServeHTTP(w, r)

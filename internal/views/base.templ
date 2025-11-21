@@ -49,11 +49,11 @@ templ Nav() {
 						<ul class="rounded-t-none p-2">
 							<li><a class="link link-hover" data-on:click="@get('/blog/latest'); $page = '/blog/latest'">Latest</a> </li>
 							<li><a class="link link-hover" data-on:click="@get('/blog/all'); $page = '/blog/all'">All</a> </li>
-							<li><a class="link link-hover" data-on:click="@get('/blog/'); $page = '/blog/'">Index</a> </li>
+							<li><a class="link link-hover" data-on:click="@get('/blog'); $page = '/blog'">Index</a> </li>
 						</ul>
 					</details>
 				</li>
-				if apps.AppHealth.Read("hire") {
+				if apps.AppHealth.Read(apps.HIRE) {
 					<li><a href="https://hire.apparently-typ.ing" target="_blank">Hire</a> </li>
 				}
 				<li>

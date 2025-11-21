@@ -13,12 +13,9 @@ func NewHandler() http.Handler {
 }
 
 func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	switch r.Method {
-	case http.MethodGet:
-		// Check
-		templ.Handler(Home()).ServeHTTP(w, r)
-
-	default:
+	if r.Method != http.MethodGet {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
 	}
+	templ.Handler(Home()).ServeHTTP(w, r)
 }

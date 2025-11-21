@@ -1,6 +1,7 @@
 package apps
 
 import (
+	"context"
 	"log/slog"
 	"net/http"
 	"sync"
@@ -10,16 +11,24 @@ import (
 )
 
 const (
-	jpassistant = "jpassistant"
-	hire        = "hire"
-	checkpoint  = "checkpoint"
+	JPASSISTANT = "jpassistant"
+	HIRE        = "hire"
+	CHECKPOINT  = "checkpoint"
 )
 
 var apps = map[string]string{
-	jpassistant: "https://joushu.apparently-typ.ing/healthcheck",
-	hire:        "https://hire.apparently-typ.ing/healthcheck",
-	checkpoint:  "https://checkpoint.apparently-typ.ing/healthcheck",
+	JPASSISTANT: "https://joushu.apparently-typ.ing/healthcheck",
+	HIRE:        "https://hire.apparently-typ.ing/healthcheck",
+	CHECKPOINT:  "https://checkpoint.apparently-typ.ing/healthcheck",
 }
+
+var AppHealth = newHealthMap(
+	map[string]bool{
+		JPASSISTANT: false,
+		HIRE:        false,
+		CHECKPOINT:  false,
+	},
+)
 
 // Simple concurrent lock to ensure that the health status endpoints are
 // read safe.
@@ -48,30 +57,22 @@ func (hm *healthMap) Write(key string, val bool) {
 
 type Handler struct{}
 
-var AppHealth = newHealthMap(
-	map[string]bool{
-		jpassistant: false,
-		hire:        false,
-		checkpoint:  false,
-	},
-)
-
 func NewHandler() http.Handler {
 	h := &Handler{}
-	go h.serve()
+	go h.serve(context.Background())
 	return h
 }
 
 func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	switch r.Method {
-	case http.MethodGet:
-		// Parameter is passed to check specific endpoint's state
-		appname := r.URL.Query().Get("app")
-		templ.Handler(Indicator(appname, AppHealth.Read(appname))).ServeHTTP(w, r)
-
-	default:
+	if r.Method != http.MethodGet {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+
 	}
+	// Parameter is passed to check specific endpoint's state
+	appname := r.URL.Query().Get("app")
+	templ.Handler(Indicator(appname, AppHealth.Read(appname))).ServeHTTP(w, r)
+
 }
 
 func checkapp(endpoint string) bool {
@@ -79,26 +80,30 @@ func checkapp(endpoint string) bool {
 	if err != nil {
 		return false
 	}
-	if resp.StatusCode == http.StatusOK {
-		return true
-	}
-	return false
+	defer resp.Body.Close()
+	return resp.StatusCode == http.StatusOK
 }
 
-func (h *Handler) serve() {
+func (h *Handler) serve(ctx context.Context) {
+	ticker := time.NewTicker(60 * time.Second)
 	slog.Info("Health Check Service Started")
 	var wg sync.WaitGroup
 	for {
-		slog.Debug("Health Heartbeat Check")
-		for key := range apps {
-			wg.Go(
-				func() {
-					health := checkapp(key)
-					AppHealth.Write(key, health)
-					slog.Debug("App Health", key, health)
-				})
+		select {
+		case <-ctx.Done():
+			return
+		case <-ticker.C:
+			slog.Debug("Health Heartbeat Check")
+			for key := range apps {
+				key := key
+				wg.Go(
+					func() {
+						health := checkapp(key)
+						AppHealth.Write(key, health)
+						slog.Debug("App Health", "app", key, "healthy", health)
+					})
+			}
+			wg.Wait()
 		}
-		wg.Wait()
-		time.Sleep(60 * time.Second)
 	}
 }

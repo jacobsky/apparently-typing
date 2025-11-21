@@ -16,6 +16,8 @@ templ Base(title string) {
 			<link href="/assets/css/output.css" rel="stylesheet" type="text/css"/>
 		</head>
 		<body>
+			// Provides the history updates as well as ensuring that any page jumps return the browser to the top of the page
+			<div data-signal:page data-effect="window.history.replaceState({}, '', $page); window.scrollTo({top: 0, left: 0, behavior: 'smooth'})"></div>
 			{ children... }
 		</body>
 	</html>
@@ -36,7 +38,7 @@ templ Layout(title string) {
 templ Nav() {
 	<div class="sticky top-0 navbar bg-base-300 text-base-content shadow-sm flex-wrap">
 		<div class="flex-1">
-			<a class="text-xl text-nowrap" href="/">> Apparently Typing</a>
+			<a class="text-xl text-nowrap link link-hover" data-on:click="@get('/'); $page = '/'">> Apparently Typing</a>
 		</div>
 		<div class="flex-none">
 			<ul class="menu menu-horizontal place-items-center px-1">
@@ -44,9 +46,9 @@ templ Nav() {
 					<details>
 						<summary class="btn m-1">Blog </summary>
 						<ul class="rounded-t-none p-2">
-							<li><a href="/blog/latest">Latest</a> </li>
-							<li><a href="/blog/all">All</a> </li>
-							<li><a href="/blog/">Index</a> </li>
+							<li><a class="link link-hover" data-on:click="@get('/blog/latest'); $page = '/blog/latest'">Latest</a> </li>
+							<li><a class="link link-hover" data-on:click="@get('/blog/all'); $page = '/blog/all'">All</a> </li>
+							<li><a class="link link-hover" data-on:click="@get('/blog/'); $page = '/blog/'">Index</a> </li>
 						</ul>
 					</details>
 				</li>
@@ -76,12 +78,13 @@ templ Nav() {
 
 templ Footer() {
 	<footer class="bottom-0 footer footer-horizontal footer-center bg-base-100 text-base-content-300 items-center py-4">
+		<div class="divider divider-primary"></div>
 		<nav class="grid grid-flow-col gap-4">
 			<p>Powered by:</p>
-			<a class="link link-hover" href="https://go.dev/">go</a>
-			<a class="link link-hover" href="https://github.com/a-h/templ">templ</a>
-			<a class="link link-hover" href="https://datastar.dev/">datastar</a>
-			<a class="link link-hover" href="https://daisyui.com">daisyui</a>
+			<a class="link link-hover" href="https://go.dev/" target="_blank">go</a>
+			<a class="link link-hover" href="https://github.com/a-h/templ" target="_blank">templ</a>
+			<a class="link link-hover" href="https://datastar.dev/" target="_blank">datastar</a>
+			<a class="link link-hover" href="https://daisyui.com" target="_blank">daisyui</a>
 		</nav>
 		<aside>
 			<p>

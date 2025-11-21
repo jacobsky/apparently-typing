@@ -39,12 +39,6 @@ func NewHandler() http.Handler {
 func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodGet:
-		// If we get a datastar request, we need to handle it using SSE's
-		if r.Header.Get("Datastar-Request") == "true" {
-			slog.Info("Datastar-Request")
-			handleDatastar(w, r)
-			return
-		}
 
 		switch r.PathValue("id") {
 		// continous reading for all the posts.
@@ -78,14 +72,18 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 				http.Redirect(w, r, "/blog/", http.StatusMovedPermanently)
 				return
 			}
-			showpost(index, w, r)
+			if r.URL.Query().Has("continuous") {
+				scroll(w, r)
+			} else {
+				showpost(index, w, r)
+			}
 		}
 	default:
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 	}
 }
 
-func handleDatastar(w http.ResponseWriter, r *http.Request) {
+func scroll(w http.ResponseWriter, r *http.Request) {
 	sse := datastar.NewSSE(w, r)
 	index, err := strconv.Atoi(r.PathValue("id"))
 	// If failed, we'll just let the connection close without updating anything.
@@ -108,7 +106,7 @@ func handleDatastar(w http.ResponseWriter, r *http.Request) {
 		slog.Error("Internal Server Error", "error", err)
 		return
 	}
-	// TODO: Allow for "direct links" in addition to infinite scrolling approach
+
 	if index > 0 {
 		err = sse.PatchElementTempl(PostScroll(index-1), datastar.WithSelectorID("post_nav"))
 		if err != nil {

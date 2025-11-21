@@ -11,8 +11,8 @@ templ Index(section string, titles []BlogPost) {
 			<h3 class="text-3xl underlined p-4">{ section }</h3>
 			<ul class="list rounded-box shadow-md">
 				for i := len(titles) - 1; i>=0; i-- {
-					<a class="hover" href={ fmt.Sprintf("/blog/%v", i) }>
-						<li class="list-row hover:secondary">
+					<a class="link-hover" class="link link-hover" data-on:click={ fmt.Sprintf("@get('/blog/%v'); $page = '/blog/%v'", i, i) }>
+						<li class="list-row">
 							<div class="text-xl">
 								{ titles[i].Date.Format("2006-01-02") }
 							</div>
@@ -31,10 +31,9 @@ templ PostFrag(data *BlogPost) {
 	<section class="mx-auto my-4">
 		<article class="prose lg:prose-xl">
 			<h3>{ data.Title } </h3>
-			<h4>Blog Post { data.ID } posted: { data.Date.Format("2006-01-02") } </h4>
+			<div class="divider divider-primary">Post #{ data.ID } { data.Date.Format("2006-01-02") }</div>
 			@data.Content
 		</article>
-		<div class="divider"></div>
 	</section>
 }
 
@@ -47,19 +46,20 @@ templ Post(data *BlogPost, nav templ.Component) {
 
 // next and prev are the related post IDs, if -1 it means there is no post to navigate to
 templ Nav(next, prev int) {
-	<div id="post_nav" class="flex justify-self-center">
-		<ul class="menu menu-horizontal rounded-box justify-center">
+	<div class="divider divider-neutral"></div>
+	<div id="post_nav" class=" flex justify-center-safe">
+		<ul class="menu menu-horizontal rounded-box">
 			if prev != -1 {
 				<li>
-					<a href={ fmt.Sprintf("/blog/%v", prev) }>Back</a>
+					<a data-on:click={ fmt.Sprintf("@get('/blog/%v'); $page='/blog/%v'; window.scrollTo(0,0)", prev, prev) }>Back</a>
 				</li>
 			}
 			<li>
-				<a href="/blog/">Top</a>
+				<a data-on:click="@get('/blog/'); $page='/blog/'">Top</a>
 			</li>
 			if next != -1 {
 				<li>
-					<a href={ fmt.Sprintf("/blog/%v", next) }>Next</a>
+					<a data-on:click={ fmt.Sprintf("@get('/blog/%v'); $page='/blog/%v'; window.scrollTo(0,0)", next, next) }>Next</a>
 				</li>
 			}
 		</ul>
@@ -67,7 +67,7 @@ templ Nav(next, prev int) {
 }
 
 templ PostScroll(next int) {
-	<div class="justify-self-center" data-indicator:fetching id="post_nav" data-on-intersect__once={ fmt.Sprintf("@get('/blog/%v')", next) }>
-		<div class="loading loading-ring" data-show="$fetching"></div>
+	<div class="flex w-full" data-indicator:fetching id="post_nav" data-on-intersect__once={ fmt.Sprintf("@get('/blog/%v?continuous=true')", next) }>
+		<div class="loading loading-ring justify-self-center" data-show="$fetching"></div>
 	</div>
 }

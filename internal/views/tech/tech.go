@@ -1,4 +1,4 @@
-package apps
+package tech
 
 import (
 	"net/http"
@@ -16,7 +16,6 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
-
 	}
 	templ.Handler(Index()).ServeHTTP(w, r)
 }

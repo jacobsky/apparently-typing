@@ -2,9 +2,14 @@ package views
 
 import (
 	"apparently-typing/internal/components"
-	"apparently-typing/internal/views/apps"
+	"apparently-typing/internal/views/apphealth"
+	"fmt"
 	"time"
 )
+
+func dsget(link string) string {
+	return fmt.Sprintf("@get('%v'); $page='%v'", link, link)
+}
 
 templ Base(title string) {
 	<!DOCTYPE html>
@@ -39,7 +44,7 @@ templ Layout(title string) {
 templ Nav() {
 	<div class="sticky top-0 navbar bg-base-300 text-base-content shadow-sm flex-wrap">
 		<div class="flex-1">
-			<a class="text-xl text-nowrap link link-hover" data-on:click="@get('/'); $page = '/'">> Apparently Typing</a>
+			<a class="text-xl text-nowrap link link-hover" data-on:click__viewtransition={ dsget("/") }>> Apparently Typing</a>
 		</div>
 		<div class="flex-none">
 			<ul class="menu menu-horizontal place-items-center px-1">
@@ -47,13 +52,14 @@ templ Nav() {
 					<details>
 						<summary class="btn m-1">Blog </summary>
 						<ul class="rounded-t-none p-2">
-							<li><a class="link link-hover" data-on:click="@get('/blog/latest'); $page = '/blog/latest'">Latest</a> </li>
-							<li><a class="link link-hover" data-on:click="@get('/blog/all'); $page = '/blog/all'">All</a> </li>
-							<li><a class="link link-hover" data-on:click="@get('/blog'); $page = '/blog'">Index</a> </li>
+							<li><a class="link link-hover" data-on:click__viewtransition={ dsget("/blog/latest") }>Latest</a> </li>
+							<li><a class="link link-hover" data-on:click__viewtransition={ dsget("/blog/all") }>All</a> </li>
+							<li><a class="link link-hover" data-on:click__viewtransition={ dsget("/blog") }>Index</a> </li>
 						</ul>
 					</details>
 				</li>
-				if apps.AppHealth.Read(apps.HIRE) {
+				<li><a data-on:click__viewtransition={ dsget("/apps") }>Apps</a></li>
+				if apphealth.AppHealth.Read(apphealth.HIRE) {
 					<li><a href="https://hire.apparently-typ.ing" target="_blank">Hire</a> </li>
 				}
 				<li>

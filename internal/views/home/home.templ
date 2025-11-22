@@ -5,13 +5,27 @@ import "apparently-typing/internal/views"
 templ Home() {
 	@views.Layout("Home") {
 		<div class="text-base-content prose lg:prose-xl my-4">
-			<h1>Hello! I'm Jacobsky</h1>
 			<p>
-				I am not sure how you stumbled here, but welcome to my little slice of the web.
-				This site is hosted on my own personal VPS somewhere at the moment.
-				A constant work in progress, I post my musings, thoughts, tech and other similarly related stuff.
-				At the top, you can find a link to my blog and github as well as a link to my scout page, if you would like to
-				hire me for work.
+				Welcome to my little slice of the web.
+				This is a little project portal that I use for my musings and to show off my portfolio.
+			</p>
+			<p>
+				My projects are all hosted on this domain as a kind of portfolio. You can find links in the top bar.
+			</p>
+			<p>
+				All of my apps are hosted on the same shared VPS. 
+				<details>
+					<summary>VPS Instance Details</summary>
+					<table>
+						<tr><td>Host Provider</td><td><a href="https://www.hostinger.com" target="_blank">Hostinger</a></td></tr>
+						<tr><td>Host CPU</td><td>2 Cores</td></tr>
+						<tr><td>Host Memory</td><td>8GB</td></tr>
+						<tr><td>Host OS</td><td>Arch Linux, btw</td></tr>
+						<tr><td>Host Location</td><td>Malaysia</td></tr>
+						<tr><td>Deployment Management</td><td>Docker Stack</td></tr>
+						<tr><td>Observability Stack</td><td>Loki, Grafana, Tempo, Mimir/Prometheus (LGTM)</td></tr>
+					</table>
+				</details>
 			</p>
 		</div>
 	}

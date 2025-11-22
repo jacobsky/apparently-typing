@@ -1,0 +1,29 @@
+package apphealth
+
+import "fmt"
+
+templ Indicator(appid string) {
+	{{ success := AppHealth.Read(appid) }}
+	<div
+		id={ appid + "health_indicator" }
+		class="flex text-sm tooltip"
+		data-on-interval__duration.60s={ fmt.Sprintf("@get('/apphealth/%v')", appid) }
+		if success {
+			data-tip="Online"
+		} else {
+			data-tip="Offline"
+		}
+	>
+		if success {
+			<div class="inline-grid *:[grid-area:1/1]">
+				<div class="status status-success animate-ping"></div>
+				<div class="status status-success"></div>
+			</div>
+		} else {
+			<div class="inline-grid *:[grid-area:1/1]">
+				<div class="status status-error animate-ping"></div>
+				<div class="status status-error"></div>
+			</div>
+		}
+	</div>
+}

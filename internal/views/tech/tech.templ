@@ -1,0 +1,32 @@
+package tech
+
+import "apparently-typing/internal/views"
+
+templ Card() {
+	<article>
+		<h1></h1>
+	</article>
+}
+
+templ Index() {
+	@views.Layout("Tech") {
+		<section>
+			<article class="prose xl:prose-xl">
+				<h1>Hypermedia on Go + Templ + Tailwind + datastar </h1>
+				<p>The stack that I use to power this site site and my other projects.</p>
+			</article>
+			<div class="divider divider-neutral"></div>
+			<article class="prose xl:prose-xl">
+				<h1>Game Development on Godot + GDExtension(Rust in my case)</h1>
+				<p>
+					Game Development is less stack oriented than the web, but my go to technology choice will always continue to be Godot. 
+					One of the core foundational elements of game development is a need to understand how things work at a low level. 
+					You can learn so much from the Open Source engine that it almost feels like it would be impossible to do with any other engine.
+					Godot also built a very powerful extensions API that can be used to build tooling and (more importantly) games using any language that you like.
+					For my purposes, I find that using a simple, expressive, high level language (such as Godot's GDScript) combined with a more terse and strict systems language (Rust) to provide a good structure for building games.
+					Gameplay behaviors can leverage the simplicity provided by GDScript while the trickier work can be done in Rust. This is the stack that I have used in my own projects.
+				</p>
+			</article>
+		</section>
+	}
+}

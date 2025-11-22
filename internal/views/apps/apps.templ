@@ -1,12 +1,40 @@
 package apps
 
-templ Indicator(content string, healthy bool) {
-	<div class="indicator">
-		if healthy {
-			<div class="indicator-item badge badge-success animate-ping">Healthy </div>
-		} else {
-			<div class="indicator-item badge badge-error">Unhealthy </div>
-		}
-		<div class="bg-base-300 grid h-32 w-32 place-items-center">{ content }</div>
+import (
+	"apparently-typing/internal/views"
+	"apparently-typing/internal/views/apphealth"
+)
+
+templ AppCard(appname, appid string) {
+	<div class="card bg-base-300 w-72 shadow-sm">
+		<div class="card-body items-center">
+			<h2 class="card-title">
+				{ appname } @apphealth.Indicator(appid)
+			</h2>
+			{ children... }
+			<div class="card-actions">
+				<a class="btn btn-outline" href={ apphealth.AppURLs[appid] } target="_blank">Go to App</a>
+			</div>
+		</div>
 	</div>
+}
+
+templ Index() {
+	@views.Layout("Apps") {
+		<section class="items-center my-4">
+			<h1 class="text-3xl text-center my-4">Apparently Apps</h1>
+			<div class="divider divider-neutral"></div>
+			<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 place-items-stretch gap-4">
+				@AppCard("Scout Me", apphealth.HIRE) {
+					<p>A business card with a simple contact form that anyone interested in hiring me can use to reach out to me anonymously with the information that I am interested in.</p>
+				}
+				@AppCard("Japanese Assistant", apphealth.JPASSISTANT) {
+					<p>An LLM powered assistant aimed at providing assistance to Japanese learners. Note: Accuracy is dependent on model and endpoint</p>
+				}
+				@AppCard("Checkpoint", apphealth.CHECKPOINT) {
+					<p>A more involved reactive application dedicated to one of my favorite bits of internet culture.</p>
+				}
+			</div>
+		</section>
+	}
 }

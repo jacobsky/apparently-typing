@@ -15,6 +15,6 @@ Part 3 of my go learning projects. I'm building my small microblog platform. Thi
     - [ ] Language Preferences
 - [ ] Link to other projects (conditionally based on health status)
     - [x] Global link to hireme app
-    - [ ] Page with Link and explanation for each app
+    - [x] Page with Link and explanation for each app
 - [x] Create a proper apparently-typ.ing look with some tailwind component library
 

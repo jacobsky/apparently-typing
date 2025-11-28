@@ -1,0 +1,40 @@
+package components
+
+import "time"
+
+templ Nav(titlelink templ.Component, links []templ.Component) {
+	<div class="sticky top-0 navbar bg-base-300 text-base-content shadow-sm flex-wrap">
+		<div class="flex-1">
+			@titlelink
+		</div>
+		<div class="flex-none">
+			<ul class="menu menu-horizontal place-items-center px-1">
+				for _, component := range links {
+					<li>
+						@component
+					</li>
+				}
+			</ul>
+		</div>
+	</div>
+}
+
+templ Footer() {
+	<footer class="footer footer-horizontal footer-center bg-base-100 text-base-content-300 items-center py-4">
+		<div class="divider divider-primary"></div>
+		<nav class="grid grid-flow-col gap-4">
+			<p>Powered by:</p>
+			<a class="link link-hover" href="https://go.dev/" target="_blank">go</a>
+			<a class="link link-hover" href="https://github.com/a-h/templ" target="_blank">templ</a>
+			<a class="link link-hover" href="https://datastar.dev/" target="_blank">datastar</a>
+			<a class="link link-hover" href="https://daisyui.com" target="_blank">daisyui</a>
+		</nav>
+		<aside>
+			<p>
+				> An Apparently Typing Project
+				<br/>
+				Copyright (c) { time.Now().Format("2006") } jacobsky. All Rights Reserved.
+			</p>
+		</aside>
+	</footer>
+}

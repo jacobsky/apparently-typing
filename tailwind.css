@@ -1,4 +1,5 @@
 @import "tailwindcss" source("internal");
+@source "./pkg/components";
 
 @plugin "@tailwindcss/typography";
 @plugin "daisyui" {

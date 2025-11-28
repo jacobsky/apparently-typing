@@ -1,4 +1,4 @@
-FROM golang:1.25.2-alpine AS build
+FROM golang:1.25.4-alpine AS build
 RUN apk add --no-cache curl libstdc++ libgcc npm
 
 WORKDIR /app

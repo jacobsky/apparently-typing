@@ -1,11 +1,11 @@
 package server
 
 import (
-	"apparently-typing/internal/views/apphealth"
-	"apparently-typing/internal/views/apps"
-	"apparently-typing/internal/views/blog"
-	"apparently-typing/internal/views/home"
-	"apparently-typing/internal/views/tech"
+	"github.com/jacobsky/apparently-typing/internal/views/apphealth"
+	"github.com/jacobsky/apparently-typing/internal/views/apps"
+	"github.com/jacobsky/apparently-typing/internal/views/blog"
+	"github.com/jacobsky/apparently-typing/internal/views/home"
+	"github.com/jacobsky/apparently-typing/internal/views/tech"
 	"net/http"
 )
 

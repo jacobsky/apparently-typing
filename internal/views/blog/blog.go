@@ -1,7 +1,7 @@
 package blog
 
 import (
-	"apparently-typing/static"
+	"github.com/jacobsky/apparently-typing/static"
 	"bytes"
 	"context"
 	"errors"

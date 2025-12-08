@@ -15,18 +15,21 @@ const (
 	JPASSISTANT = "jpassistant"
 	HIRE        = "hire"
 	CHECKPOINT  = "checkpoint"
+	DEMOS       = "demos"
 )
 
 var AppURLs = map[string]string{
 	JPASSISTANT: "https://joushu.apparently-typ.ing/",
 	HIRE:        "https://hire.apparently-typ.ing/",
 	CHECKPOINT:  "https://checkpoint.apparently-typ.ing/",
+	DEMOS:       "https://demos.apparently-typ.ing/",
 }
 
 var appHealthEndpoints = map[string]string{
 	JPASSISTANT: "https://joushu.apparently-typ.ing/healthcheck",
 	HIRE:        "https://hire.apparently-typ.ing/healthcheck",
 	CHECKPOINT:  "https://checkpoint.apparently-typ.ing/healthcheck",
+	DEMOS:       "https://demos.apparently-typ.ing/healthcheck",
 }
 
 var AppHealth = newHealthMap(
@@ -34,6 +37,7 @@ var AppHealth = newHealthMap(
 		JPASSISTANT: false,
 		HIRE:        false,
 		CHECKPOINT:  false,
+		DEMOS:       false,
 	},
 )
 
@@ -88,7 +92,7 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	sse := datastar.NewSSE(w, r)
 	if appname == "" {
 		slog.Error("appname is empty")
-		_ = sse.ConsoleError(fmt.Errorf("Bad request Appname is empty"))
+		_ = sse.ConsoleError(fmt.Errorf("bad request appname is empty"))
 		return
 	}
 	err := sse.PatchElementTempl(Indicator(appname))

@@ -1,26 +1,28 @@
 package blog
 
 import (
-	"github.com/jacobsky/apparently-typing/internal/views"
 	"fmt"
+	"github.com/jacobsky/apparently-typing/internal/views"
 )
 
 templ Index(section string, titles []BlogPost) {
 	@views.Layout("Blog") {
-		<section class="my-4">
-			<h3 class="text-3xl underlined p-4">{ section }</h3>
-			<ul class="list rounded-box shadow-md">
+		<section class="margin large">
+			<h3>{ section }</h3>
+			<ul class="list no-space border">
 				for i := len(titles) - 1; i>=0; i-- {
-					<a class="link link-hover" data-on:click={ fmt.Sprintf("@get('/blog/%v'); $page = '/blog/%v'", i, i) }>
-						<li class="list-row">
-							<div class="text-xl">
-								{ titles[i].Date.Format("2006-01-02") }
+					<li>
+						<a class="link" data-on:click={ fmt.Sprintf("@get('/blog/%v'); $page = '/blog/%v'", i, i) }>
+							<div class="max">
+								<h6>
+									{ titles[i].Title }
+								</h6>
+								<div>
+									{ titles[i].Date.Format("2006-01-02") }
+								</div>
 							</div>
-							<div class="text-xl list-column-grow">
-								{ titles[i].Title }
-							</div>
-						</li>
-					</a>
+						</a>
+					</li>
 				}
 			</ul>
 		</section>
@@ -28,13 +30,13 @@ templ Index(section string, titles []BlogPost) {
 }
 
 templ PostFrag(data *BlogPost) {
-	<section class="mx-auto my-4">
-		<article class="prose lg:prose-xl">
+	<section class="margin large">
+		<article class="prose">
 			<h3>{ data.Title } </h3>
-			<div class="divider divider-neural">Post #{ data.ID } { data.Date.Format("2006-01-02") }</div>
+			<p>Post #{ data.ID } \@ { data.Date.Format("2006-01-02") }</p>
+			<div class="divider"></div>
 			@data.Content
 		</article>
-		<div class="divider divider-primary"></div>
 	</section>
 }
 
@@ -47,27 +49,19 @@ templ Post(data *BlogPost, nav templ.Component) {
 
 // next and prev are the related post IDs, if -1 it means there is no post to navigate to
 templ Nav(next, prev int) {
-	<div id="post_nav" class=" flex justify-center-safe">
-		<ul class="menu menu-horizontal rounded-box">
-			if prev != -1 {
-				<li>
-					<a data-on:click={ fmt.Sprintf("@get('/blog/%v'); $page='/blog/%v'; window.scrollTo(0,0)", prev, prev) }>Back</a>
-				</li>
-			}
-			<li>
-				<a data-on:click="@get('/blog/'); $page='/blog/'">Top</a>
-			</li>
-			if next != -1 {
-				<li>
-					<a data-on:click={ fmt.Sprintf("@get('/blog/%v'); $page='/blog/%v'; window.scrollTo(0,0)", next, next) }>Next</a>
-				</li>
-			}
-		</ul>
-	</div>
+	<nav id="post_nav" class="center-align">
+		if prev != -1 {
+			<a data-on:click={ fmt.Sprintf("@get('/blog/%v'); $page='/blog/%v'; window.scrollTo(0,0)", prev, prev) }>Back</a>
+		}
+		<a data-on:click="@get('/blog/'); $page='/blog/'">Top</a>
+		if next != -1 {
+			<a data-on:click={ fmt.Sprintf("@get('/blog/%v'); $page='/blog/%v'; window.scrollTo(0,0)", next, next) }>Next</a>
+		}
+	</nav>
 }
 
 templ PostScroll(next int) {
-	<div class="flex w-full" data-indicator:fetching id="post_nav" data-on-intersect__once={ fmt.Sprintf("@get('/blog/%v?continuous=true')", next) }>
-		<div class="loading loading-ring justify-self-center" data-show="$fetching"></div>
+	<div class="flex max" data-indicator:fetching id="post_nav" data-on-intersect__once={ fmt.Sprintf("@get('/blog/%v?continuous=true')", next) }>
+		<div class="loading" data-show="$fetching"></div>
 	</div>
 }

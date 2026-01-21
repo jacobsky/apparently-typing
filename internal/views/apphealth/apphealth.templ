@@ -4,26 +4,21 @@ import "fmt"
 
 templ Indicator(appid string) {
 	{{ success := AppHealth.Read(appid) }}
-	<div
+	<button
+		class="chip round"
 		id={ appid + "health_indicator" }
-		class="flex text-sm tooltip"
 		data-on-interval__duration.60s={ fmt.Sprintf("@get('/apphealth/%v')", appid) }
-		if success {
-			data-tip="Online"
-		} else {
-			data-tip="Offline"
-		}
 	>
 		if success {
-			<div class="inline-grid *:[grid-area:1/1]">
-				<div class="status status-success animate-ping"></div>
-				<div class="status status-success"></div>
+			<div>
+				<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#15d34b"><path d="M198-278q-57-57-87.5-129.5T80-560q0-80 30.5-152.5T198-842l48 48q-47 47-72.5 107.5T148-560q0 66 25.5 126.5T246-326l-48 48Zm92-92q-38-38-58-87t-20-103q0-54 20-103t58-87l48 48q-29 29-43.5 65.5T280-560q0 40 14.5 76.5T338-418l-48 48Zm150 250v-348q-27-12-43.5-37T380-560q0-42 29-71t71-29q42 0 71 29t29 71q0 30-16.5 55T520-468v348h-80Zm230-250-48-48q29-29 43.5-65.5T680-560q0-40-14.5-76.5T622-702l48-48q38 38 58 87t20 103q0 54-20 103t-58 87Zm92 92-48-48q47-47 72.5-107.5T812-560q0-66-25.5-126.5T714-794l48-48q57 57 87.5 129.5T880-560q0 80-30.5 152.5T762-278Z"></path></svg>
+				<div class="tooltip">Online</div>
 			</div>
 		} else {
-			<div class="inline-grid *:[grid-area:1/1]">
-				<div class="status status-error animate-ping"></div>
-				<div class="status status-error"></div>
+			<div>
+				<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#c41909"><path d="m684-389-49-49q22-26 33.5-57t11.5-65q0-40-16-76t-44-64l48-48q38 38 59 86t21 102q0 48-17 91.5T684-389ZM565-508 428-645q12-7 25-11t27-4q42 0 71 29t29 71q0 14-4 27t-11 25Zm215 214-48-48q40-45 60-101.5T812-560q0-66-24.5-127.5T716-796l48-48q55 58 85.5 131T880-560q0 74-25.5 142.5T780-294Zm11 238L520-327v207h-80v-287L280-566v6q0 40 16 76t44 64l-48 48q-38-38-59-86t-21-102q0-17 2-33t7-33l-51-51q-11 29-16.5 58t-5.5 59q0 66 24.5 127.5T244-324l-48 48q-55-58-85.5-131T80-560q0-44 9.5-86.5T118-729l-62-62 56-57 736 736-57 56Z"></path></svg>
+				<div class="tooltip">Offline</div>
 			</div>
 		}
-	</div>
+	</button>
 }

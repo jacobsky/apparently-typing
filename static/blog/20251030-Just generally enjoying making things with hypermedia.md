@@ -33,7 +33,8 @@ you are wanting to patch directly into the event like so:
 
 func myhandler (w http.ResponseWriter, r *http.Request) {
     sse := datastar.NewSSE(w, r) _ = sse.PatchTempl(MyComponent())
-} ```
+}
+```
 
 The convenience functionality for working with signals also makes a lot
 of the server-driven reactivity absolutely trivial such as this quick and
@@ -42,23 +43,26 @@ of an unspoken order of operations that you must read the signals _before_
 opening an Server Sent Event, so some of the error handling can be a smidge
 clunky around this specific aspect.
 
-**NOTE** Datastar is __not__ expecting that all the signals be defined in
+**NOTE** Datastar is **not** expecting that all the signals be defined in
 `MySignals` while it will send all signals (unless filtered) the SDK is smart
 enough to ensure that only the specific keys listed will be taken. In this
 example, if there were actually `third` and `fourth` defined as signals in
-the Templates, there will be no errors in running the following.  ```go type
+the Templates, there will be no errors in running the following.
+
+```go type
 MySignals struct {
     First string `json:"first"` Second bool `json:"second"`
 }
 
 func myhandler (w http.ResponseWriter, r *http.Request) {
     signals := &MySignals{}
-	_ := datastar.ReadSignals(r, signals)
+ _ := datastar.ReadSignals(r, signals)
     sse := datastar.NewSSE(w, r) // Just some operations signals.First =
     "New Value" signals.Second = !signals.Second
-	output, _ := json.Marshal(signals)
+ output, _ := json.Marshal(signals)
     _ := sse.PatchSignals(output)
-} ```
+}
+```
 
 With these two building blocks it makes it trivial to drive any and all
 behavior with the server. For example, in my first actual project (an LLM
@@ -86,7 +90,7 @@ my LSP to dig, but I could see it being a bit of a hangup with adoption
 into organizations.  2. There seems to be a minor disagreement with how two
 of the 1.0 RCs work that have some cryptic (or non-existent) syntax errors
 (particularly `data-attr-myattr` vs `data-attr:myattr`). It was nothing
-major, but lead to some initial hangups and confusion.	3. The debugger
+major, but lead to some initial hangups and confusion. 3. The debugger
 being blocked behind pro might hinder adoption slightly. I don't think it's
 entirely necessary, but -- at the very least -- the build in developer tools
 did not seem to be as consistent with catching the signals.

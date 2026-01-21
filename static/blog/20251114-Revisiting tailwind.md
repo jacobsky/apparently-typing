@@ -36,7 +36,8 @@ piece of it is.
 
 For example, what does this component do?
 
-``` <section class="mx-auto my-4">
+```
+<section class="mx-auto my-4">
     <article class="prose lg:prose-xl">
         <h3> header </h3> <div class="divider"></div> <h4> sub header</h4>
         This is some content
@@ -51,7 +52,8 @@ For example, what does this component do?
             </li>
         </ul>
     </div>
-</section> ```
+</section>
+```
 
 Well, it is what renders this blog post. But going top to bottom, you can
 see it does the following:

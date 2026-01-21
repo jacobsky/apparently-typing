@@ -33,26 +33,30 @@ it that warrants it.
 
 For example the difference between the following
 
-``` // Sorts the slice func sort(a []Type) {
+```
+// Sorts the slice func sort(a []Type) {
     ...
 }
 
 // Implements an in place quicksort algorithm with no additional memory
 allocations func sort(a []Type) {
     ...
-} ```
+}
+```
 
 ### Useless Comment #3 - Explaining the syntax
 
 The less obvious, but still wasteful comments are Consider the following
 golang snippet
 
-```golang // Iterates through the slice for i := range len(connections) {
+```golang
+// Iterates through the slice for i := range len(connections) {
     // if the element is currently closed, prune if
     connections[i].IsDisconnected() {
         // close close(connections[i])
     }
-} ```
+}
+```
 
 For inexperienced or non-technical readers, these comments may be welcome. The
 main issue is that, for _most_ code bases, people should be able to understand
@@ -68,12 +72,14 @@ target audience for most comments are yourself)
 Something like the following would be more useful in order to outline the
 intent of why the connections are being iterated.
 
-``` // This is to ensure periodic cleanup of connections that have previously
+```
+// This is to ensure periodic cleanup of connections that have previously
 been closed for i := range len(connections) {
     // Due to the way that connections if connections[i].IsDisconnected() {
         // close and prune the associated listener close(connections[i])
     }
-} ```
+}
+```
 
 Remember, comments code syntax self documents _what is happening_ but doesn't
 document the intent of the code. Documenting the intent is the difference

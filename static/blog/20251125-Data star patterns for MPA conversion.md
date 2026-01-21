@@ -14,23 +14,26 @@ perfectly acceptable to add reactivity to your MPA application.
 There are a few tricks to doing so.
 
 ### Trick #1 - Differentiate by route wildcards The first simplest trick
+
 is to simply use a bunch of different sub routes, such as by using specific
 wildcards.
 
 For this blog, I have the
 
-``` func (h *handler) servehttp(w http.responsewriter, r *http.request) {
-	switch r.PathValue("id") { case "all":
-	    // continously read all posts
-	// .. snip case "latest":
-	    // Shows only the latest post
-	// .. snip
+```go
+func (h *handler) servehttp(w http.responsewriter, r *http.request) {
+ switch r.PathValue("id") { case "all":
+     // continously read all posts
+ // .. snip case "latest":
+     // Shows only the latest post
+ // .. snip
 
-	case "": // If empty show the base page
+ case "": // If empty show the base page
 
-	default: // For anything else, assume number and post the post //
-	.. snip }
-} ```
+ default: // For anything else, assume number and post the post //
+ .. snip }
+}
+```
 
 This typically works, but does require a bit more reworking when adding the
 reactivity to your application. While useful and a good starting point there
@@ -53,14 +56,15 @@ to decorate your requests to include any and all negotiation.
 
 This allows for you to have a handler such as the following:
 
-``` func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+```go
+func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
     if r.Header.Get("Datastar-Request") != "" {
-	// Do the datastar events path
+ // Do the datastar events path
     } else {
-	// Emit the base HTML (probably the full HTML with no morphing)
+ // Emit the base HTML (probably the full HTML with no morphing)
     }
-} ```
-
+}
+```
 
 ### Trick #3 - Query Parameters
 
@@ -68,12 +72,14 @@ I know, this is yet another web standard, but it's worth mentioning anyways,
 it is also pretty easy to differentiate the kinds of requests via query
 parameters such as the following:
 
-``` func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Query().Has("Flag") { // Do some datastar events
+```go
+func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+ if r.URL.Query().Has("Flag") { // Do some datastar events
     } else if param := r.URL.Query().Get("Parameter") {
-	// Do some datastar events with the query parameters
+ // Do some datastar events with the query parameters
     } // Emit the base HTML (probably the full HTML with no morphing)
-} ```
+}
+```
 
 By mixing and matching these three tricks, it makes it relatively easy
 to build up MPA apps and then convert them into a more rich and reactive

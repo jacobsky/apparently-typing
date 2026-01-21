@@ -8,9 +8,7 @@ templ Nav(titlelink templ.Component, links []templ.Component) {
 			@titlelink
 		</h6>
 		for _, component := range links {
-			<button class="small-round extra large-elevate">
-				@component
-			</button>
+			@component
 		}
 	</nav>
 }

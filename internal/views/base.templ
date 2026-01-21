@@ -34,7 +34,7 @@ templ Layout(title string) {
 	@Base(title) {
 		@Header()
 		<main id="mainbody" class="responsive">
-			<div id="content" class="padding medium no-padding center-align middle-align">
+			<div id="content" class="padding medium">
 				{ children... }
 			</div>
 		</main>
@@ -43,7 +43,7 @@ templ Layout(title string) {
 }
 
 templ TitleFragment() {
-	<a class="max" data-on:click__viewtransition={ dsget("/") }>> Apparently Typing</a>,
+	<a class="max" data-on:click__viewtransition={ dsget("/") }>> Apparently Typing</a>
 }
 
 templ DropdownLink(label string, links []templ.Component) {
@@ -85,7 +85,7 @@ templ Header() {
 				Link("Tech Stacks", "/tech"),
 				HireSite(),
 				components.GithubLink("https://github.com/jacobsky", "_blank"),
-				components.ThemeToggler("light"),
+				components.ThemeToggler(true),
 			})
 	</header>
 }
